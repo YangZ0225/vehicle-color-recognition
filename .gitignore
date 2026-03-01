@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# 虚拟环境
+venv/
+.venv/
+env/
+
+# 模型文件（体积较大，用 Git LFS 或手动上传）
+models/*.pkl
+models/*.joblib
+
+# Jupyter 检查点
+.ipynb_checkpoints/
+notebooks/.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# macOS
+.DS_Store
+
+# 原始数据（图片体积大，建议用说明文档替代上传）
+# 如果图片不多（<100MB），可以注释掉以下两行来上传
+# data/raw/
+
+# 结果图（可以保留，让 README 引用）
+# results/
