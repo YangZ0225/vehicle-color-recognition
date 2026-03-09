@@ -163,17 +163,72 @@ vcr_project/
 
 ## 🚀 快速开始
 
-### 1. 安装依赖
+### 环境要求
+
+- Python **3.8 或以上**（推荐 3.8 ~ 3.11）
+- 操作系统：Windows / macOS / Linux 均可
+- 无需 GPU，普通 CPU 即可运行
+
+---
+
+### 第一步：克隆项目到本地
+
+打开终端（Windows 用 PowerShell 或 CMD，macOS/Linux 用 Terminal），执行：
+
+```bash
+git clone https://github.com/YangZ0225/vehicle-color-recognition.git
+cd vehicle-color-recognition
+```
+
+> 如果没有安装 Git，可以直接在 GitHub 页面点击绿色的 **Code → Download ZIP**，解压后进入项目文件夹。
+
+---
+
+### 第二步：创建虚拟环境（推荐）
+
+使用虚拟环境可以避免依赖冲突，强烈建议操作：
+
+```bash
+# 创建虚拟环境
+python -m venv venv
+
+# 激活虚拟环境
+# macOS / Linux：
+source venv/bin/activate
+
+# Windows CMD：
+venv\Scripts\activate.bat
+
+# Windows PowerShell：
+venv\Scripts\Activate.ps1
+```
+
+激活成功后，终端前会出现 `(venv)` 前缀。
+
+---
+
+### 第三步：安装依赖
 
 ```bash
 pip install -r requirements.txt
-# 国内网络推荐使用清华源
-pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
-### 2. 准备数据
+> 🇨🇳 **国内网络**安装较慢时，使用清华镜像源加速：
+> ```bash
+> pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+> ```
 
-将车辆图片按颜色分类放入对应文件夹：
+安装完成后，可验证关键依赖是否正常：
+
+```bash
+python -c "import cv2, sklearn, numpy; print('环境检查通过 ✅')"
+```
+
+---
+
+### 第四步：准备训练数据
+
+将车辆图片按颜色类别分类，放入以下对应文件夹：
 
 ```
 data/raw/black_blue_brown_purple/   ← 黑色、蓝色、棕色、紫色
@@ -183,36 +238,77 @@ data/raw/pink_red/                  ← 粉色、红色
 data/raw/white_silver_gray/         ← 白色、银色、灰色
 ```
 
-### 3. 训练模型
+**说明：**
+- 每类建议至少放 **50 张以上**图片，以保证模型质量
+- 支持 `.jpg`、`.jpeg`、`.png`、`.JPG` 等常见格式
+- 若只想直接测试推理，可跳过此步，使用项目自带的预训练模型（`models/` 目录下）
+
+---
+
+### 第五步：训练模型
 
 ```bash
 python src/train.py
 ```
 
-训练完成后，`results/` 目录自动生成混淆矩阵、特征重要性图和分类报告。
+训练过程会依次完成：数据加载 → 预处理 → 特征提取 → 数据增强 → 模型训练（KNN / SVM / 随机森林对比）→ 评估报告输出。
 
-### 4. 推理测试
+训练完成后，以下文件会自动生成：
+
+```
+models/random_forest_model.pkl     # 训练好的随机森林模型
+results/confusion_matrix.png       # 混淆矩阵图
+results/feature_importance.png     # 特征重要性图
+results/classification_report.txt  # 分类报告
+```
+
+> ⏱️ 在普通笔记本上，1200 条样本的训练通常在 **1 分钟内**完成。
+
+---
+
+### 第六步：推理测试（识别单张图片颜色）
+
+使用训练好的模型对图片进行颜色识别：
 
 ```bash
 python src/predict.py --image data/test/red1.jpg
 ```
 
+将 `data/test/red1.jpg` 替换为你自己的图片路径即可。
+
 **示例输出：**
 
 ```
-）
-
- 识别结果：
+识别结果：
   颜色类别: 粉/红色
   置信度:   78.55%
   推理耗时: 192.29 ms
 ```
 
-### 5. 运行单元测试
+---
+
+### 第七步：运行单元测试
+
+验证整个流水线是否正常工作：
 
 ```bash
 python tests/test_pipeline.py
 ```
+
+所有测试通过后，说明环境配置完全正确。
+
+---
+
+### ❓ 常见问题
+
+**Q：运行时提示 `ModuleNotFoundError`？**
+确认虚拟环境已激活（终端前有 `(venv)`），然后重新执行 `pip install -r requirements.txt`。
+
+**Q：`python` 命令找不到？**
+部分系统需要使用 `python3` 代替 `python`，例如：`python3 src/train.py`。
+
+**Q：图片路径报错？**
+确保路径中没有中文或空格，建议使用英文路径。Windows 用户注意使用 `/` 或 `\\` 作为路径分隔符。
 
 ---
 
